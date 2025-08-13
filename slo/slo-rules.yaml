@@ -1,0 +1,6 @@
+
+groups:
+  - name: demo-slo
+    rules:
+      - record: job:demo_go:availability
+        expr: 1 - (sum(rate(http_server_requests_total{app="demo-go",status!~"2.."}[5m])) / sum(rate(http_server_requests_total{app="demo-go"}[5m])))

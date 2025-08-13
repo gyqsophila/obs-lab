@@ -1,0 +1,7 @@
+
+apiVersion: v2
+name: demo-go
+description: Demo Go service with OTel traces, Prometheus metrics, and JSON logs
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

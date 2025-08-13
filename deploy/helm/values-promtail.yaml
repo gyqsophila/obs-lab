@@ -1,0 +1,31 @@
+
+config:
+  clients:
+    - url: http://loki.monitoring.svc:3100/loki/api/v1/push
+  snippets:
+    pipelineStages:
+      - cri: {}
+      - json:
+          expressions:
+            ts: time
+            level: level
+            msg: msg
+            trace_id: trace_id
+      - labels:
+          level:
+      - output:
+          source: msg
+  positions:
+    filename: /run/promtail/positions.yaml
+extraScrapeConfigs: |
+  - job_name: kubernetes-pods-demo
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_label_app]
+        regex: demo-go
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_uid]
+        target: __path__
+        replacement: /var/log/pods/*$1/*.log

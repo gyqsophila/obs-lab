@@ -1,0 +1,8 @@
+
+tempo:
+  repository: grafana/tempo
+  searchEnabled: true
+  metricsGenerator:
+    enabled: true
+server:
+  http_listen_port: 3100

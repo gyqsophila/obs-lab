@@ -1,0 +1,45 @@
+
+# kube-prometheus-stack overrides
+grafana:
+  defaultDashboardsEnabled: true
+  sidecar:
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: false
+  additionalDataSources:
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://monitoring-kube-prometheus-stack-prometheus.monitoring.svc:9090
+      isDefault: true
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.monitoring.svc:3100
+    - name: Tempo
+      type: tempo
+      access: proxy
+      url: http://tempo.monitoring.svc:3100
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+  additionalPrometheusRulesMap:
+    demo-slo:
+      groups:
+        - name: demo-availability
+          rules:
+            - record: job:demo_go:request_error_ratio
+              expr: |
+                sum(rate(http_server_requests_total{app="demo-go",status!~"2.."}[5m]))
+                / sum(rate(http_server_requests_total{app="demo-go"}[5m]))
+            - alert: DemoHighErrorBudgetBurn
+              expr: job:demo_go:request_error_ratio > 0.05
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: "Demo-go error rate too high (>5% for 5m)"
+                runbook_url: https://example.local/runbooks/demo-go

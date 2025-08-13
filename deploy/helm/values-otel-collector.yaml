@@ -1,0 +1,39 @@
+
+mode: deployment
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: latest
+config:
+  receivers:
+    otlp:
+      protocols:
+        http:
+        grpc:
+  processors:
+    batch: {}
+    tail_sampling:
+      decision_wait: 5s
+      policies:
+        - name: error-status
+          type: status_code
+          status_code: { status_codes: [ERROR] }
+        - name: long-latency
+          type: latency
+          latency: { threshold_ms: 300 }
+  exporters:
+    logging:
+      loglevel: info
+    otlp:
+      endpoint: tempo-distributor.monitoring.svc:4317
+      tls:
+        insecure: true
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [batch, tail_sampling]
+        exporters: [otlp, logging]
+      metrics:
+        receivers: []
+        processors: [batch]
+        exporters: [logging]

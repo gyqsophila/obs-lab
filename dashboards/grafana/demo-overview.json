@@ -1,0 +1,52 @@
+{
+  "title": "Demo Service Overview",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Req/s",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_total{app=\"demo-go\"}[1m]))"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Latency P95",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{app=\"demo-go\"}[5m])) by (le))"
+        }
+      ],
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 18,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Error Ratio",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_total{app=\"demo-go\",status!~\"2..\"}[5m])) / sum(rate(http_server_requests_total{app=\"demo-go\"}[5m]))"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      }
+    }
+  ]
+}
