@@ -2,6 +2,7 @@
 config:
   clients:
     - url: http://loki.monitoring.svc:3100/loki/api/v1/push
+      tenant_id: "demo-go"
   snippets:
     pipelineStages:
       - cri: {}

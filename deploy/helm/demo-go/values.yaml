@@ -2,9 +2,9 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/chanlabs/obs-demo-go
+  repository: demo-go
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Never
 
 service:
   type: ClusterIP
@@ -19,7 +19,7 @@ resources:
     memory: 64Mi
 
 otel:
-  otlpEndpoint: otel-collector.monitoring.svc:4317
+  otlpEndpoint: otel-collector-opentelemetry-collector.monitoring.svc:4317
 
 prometheus:
   scrape: true

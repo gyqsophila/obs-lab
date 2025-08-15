@@ -1,10 +1,8 @@
-
 package main
 
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -12,7 +10,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/go-chi/chi/otelchi"
+	"github.com/riandyrn/otelchi"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -109,7 +107,7 @@ func main() {
 		latency.WithLabelValues("GET", "/hello").Observe(elapsed)
 		requests.WithLabelValues("GET", "/hello", fmt.Sprintf("%d", status)).Inc()
 
-		span := otel.Tracer("demo-go").Start(r.Context(), "work").Span
+		_, span := otel.Tracer("demo-go").Start(r.Context(), "work")
 		defer span.End()
 
 		// Structured log with trace_id
@@ -127,7 +125,7 @@ func main() {
 		latency.WithLabelValues("GET", "/boom").Observe(time.Since(start).Seconds())
 		requests.WithLabelValues("GET", "/boom", "500").Inc()
 
-		span := otel.Tracer("demo-go").Start(r.Context(), "boom").Span
+		_, span := otel.Tracer("demo-go").Start(r.Context(), "boom")
 		defer span.End()
 		traceID := ""
 		if sc := span.SpanContext(); sc.IsValid() {

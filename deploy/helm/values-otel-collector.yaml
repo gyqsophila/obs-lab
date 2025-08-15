@@ -7,8 +7,8 @@ config:
   receivers:
     otlp:
       protocols:
-        http:
-        grpc:
+        http: {}
+        grpc: {}
   processors:
     batch: {}
     tail_sampling:
@@ -21,10 +21,9 @@ config:
           type: latency
           latency: { threshold_ms: 300 }
   exporters:
-    logging:
-      loglevel: info
+    debug: {}
     otlp:
-      endpoint: tempo-distributor.monitoring.svc:4317
+      endpoint: tempo.monitoring.svc:4317
       tls:
         insecure: true
   service:
@@ -32,8 +31,12 @@ config:
       traces:
         receivers: [otlp]
         processors: [batch, tail_sampling]
-        exporters: [otlp, logging]
+        exporters: [otlp, debug]
       metrics:
-        receivers: []
+        receivers: [otlp]
         processors: [batch]
-        exporters: [logging]
+        exporters: [debug]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]
