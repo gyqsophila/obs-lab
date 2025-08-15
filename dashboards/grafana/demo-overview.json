@@ -8,7 +8,7 @@
       "title": "Req/s",
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_total{app=\"demo-go\"}[1m]))"
+          "expr": "sum(rate(http_server_requests_total{service=\"demo-go-demo-go\"}[1m]))"
         }
       ],
       "gridPos": {
@@ -23,7 +23,7 @@
       "title": "Latency P95",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{app=\"demo-go\"}[5m])) by (le))"
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service=\"demo-go-demo-go\"}[5m])) by (le))"
         }
       ],
       "gridPos": {
@@ -38,7 +38,7 @@
       "title": "Error Ratio",
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_total{app=\"demo-go\",status!~\"2..\"}[5m])) / sum(rate(http_server_requests_total{app=\"demo-go\"}[5m]))"
+          "expr": "sum(rate(http_server_requests_total{service=\"demo-go-demo-go\",status!~\"2..\"}[5m])) / sum(rate(http_server_requests_total{service=\"demo-go-demo-go\"}[5m]))"
         }
       ],
       "gridPos": {

@@ -5,4 +5,4 @@ tempo:
   metricsGenerator:
     enabled: true
 server:
-  http_listen_port: 3100
+  http_listen_port: 3200

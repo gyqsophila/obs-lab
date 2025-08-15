@@ -35,8 +35,8 @@ config:
       metrics:
         receivers: [otlp]
         processors: [batch]
-        exporters: [debug]
+        exporters: [debug, otlp]
       logs:
         receivers: [otlp]
         processors: [batch]
-        exporters: [debug]
+        exporters: [debug, otlp]
