@@ -110,6 +110,7 @@ curl -s "http://localhost:8080/boom" || true
 - Pod 未就绪：`kubectl get pods -A`；查看 `otel-collector`、`promtail`、`tempo` 日志。
 - Tempo 查询不到 Trace：检查 `OTEL_EXPORTER_OTLP_ENDPOINT` 与 collector exporter 到 Tempo 的地址。
 - Grafana 登录：默认 `admin/prom-operator`（kube-prometheus-stack 默认）。
+- Grafana Loki 查询报错：`no org id` ，需要在 loki 数据源中增加 http header `X-Scope-OrgID:demo-go` 保存后即可。
 
 ## 7. 清理
 ```bash

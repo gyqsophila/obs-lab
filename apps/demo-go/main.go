@@ -47,11 +47,7 @@ func init() {
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 }
 
-func tracerProvider(ctx context.Context) (*sdktrace.TracerProvider, error) {
-	endpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-	if endpoint == "" {
-		endpoint = "localhost:4317"
-	}
+func initTracerProvider(ctx context.Context, endpoint string) (*sdktrace.TracerProvider, error) {
 	exp, err := otlptracegrpc.New(ctx,
 		otlptracegrpc.WithEndpoint(endpoint),
 		otlptracegrpc.WithInsecure(),
@@ -79,7 +75,11 @@ func tracerProvider(ctx context.Context) (*sdktrace.TracerProvider, error) {
 
 func main() {
 	ctx := context.Background()
-	tp, err := tracerProvider(ctx)
+	otelEndpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+	if otelEndpoint == "" {
+		otelEndpoint = "localhost:4317"
+	}
+	tp, err := initTracerProvider(ctx, otelEndpoint)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to init tracer")
 	}
@@ -91,6 +91,8 @@ func main() {
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ok"))
+		requests.WithLabelValues("GET", "/healthz", "200").Inc()
+		log.Info().Any("method", "get").Msg("handle request /healthz")
 	})
 
 	r.Get("/hello", func(w http.ResponseWriter, r *http.Request) {

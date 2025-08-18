@@ -25,8 +25,17 @@ extraScrapeConfigs: |
     relabel_configs:
       - action: keep
         source_labels: [__meta_kubernetes_pod_label_app]
-        regex: demo-go
+        regex: demo-go   # 确认和 Pod label 匹配
+      - action: replace
+        source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_container_name]
+        target_label: container
       - action: replace
         source_labels: [__meta_kubernetes_pod_uid]
-        target: __path__
+        target_label: __path__
         replacement: /var/log/pods/*$1/*.log
